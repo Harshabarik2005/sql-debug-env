@@ -1,0 +1,77 @@
+---
+title: SQL Debug Environment
+emoji: 🔍
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+tags:
+  - openenv
+  - reinforcement-learning
+  - sql
+  - agent-evaluation
+---
+
+spec_version: 1
+name: sql_debug_env
+type: environment
+runtime: docker
+app: server/app.py
+port: 7860
+description: >
+  An OpenEnv-compliant RL environment for training and evaluating AI agents
+  that debug broken SQL queries. Five tasks covering syntax errors, wrong JOINs,
+  missing GROUP BY, HAVING vs WHERE, and scalar subquery bugs — all graded
+  deterministically with partial credit (0.0–1.0).
+
+tasks:
+  - id: easy
+    description: "Fix syntax typos in SQL keywords (SELCT, FORM, WERE)"
+    difficulty: easy
+
+  - id: medium
+    description: "Add the missing GROUP BY clause to an aggregate query"
+    difficulty: medium
+
+  - id: medium2
+    description: "Fix the wrong JOIN ON condition (e.id → e.dept_id)"
+    difficulty: medium
+
+  - id: hard
+    description: "Replace illegal WHERE aggregate with HAVING clause"
+    difficulty: hard
+
+  - id: hard2
+    description: "Fix scalar subquery returning multiple rows (add MAX)"
+    difficulty: hard
+
+action_space:
+  type: object
+  properties:
+    action_type:
+      type: string
+      enum: [test_query, submit_fix]
+    sql_query:
+      type: string
+    explanation:
+      type: string
+      nullable: true
+
+observation_space:
+  type: object
+  properties:
+    task_id: {type: string}
+    difficulty: {type: string}
+    task_description: {type: string}
+    broken_query: {type: string}
+    db_schema: {type: string}
+    error_message: {type: string}
+    feedback: {type: string}
+    last_test_output: {type: string}
+    attempt_number: {type: integer}
+    max_attempts: {type: integer}
+    steps_taken: {type: integer}
+    hint: {type: string}
+    score_breakdown: {type: object}
+    current_best_score: {type: number}
+    is_solved: {type: boolean}

@@ -1,0 +1,11 @@
+# SQL Debug Environment — Python dependencies
+# Minimal set to keep container small and startup fast (< 20 min inference requirement)
+
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+aiohttp>=3.9.0
+openai>=1.12.0
+
+# openenv-core for spec compliance (optional — gracefully falls back if unavailable)
+openenv-core>=0.2.0
