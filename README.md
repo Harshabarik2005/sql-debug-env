@@ -1,5 +1,3 @@
-# SQL Debug Environment
-
 ---
 title: SQL Debug Environment
 emoji: 🔍
@@ -10,6 +8,7 @@ pinned: false
 tags:
   - openenv
 ---
+# SQL Debug Environment
 
 An **OpenEnv-compliant RL environment** where an AI agent learns to identify and fix broken SQL queries against a live SQLite database. Five real-world tasks span **easy → hard** — all graded deterministically with partial credit (0.0–1.0) and dense per-step reward signals.
 
