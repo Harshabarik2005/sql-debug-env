@@ -28,3 +28,6 @@ include = ["server*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[project.scripts]
+server = "server.app:main"
