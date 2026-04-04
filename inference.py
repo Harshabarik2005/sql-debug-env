@@ -174,7 +174,12 @@ async def run_episode(env: SQLDebugEnv, task_id: str, llm_client: OpenAI) -> dic
             user_prompt = build_user_prompt(obs_dict, step, history)
             action_dict = call_llm(llm_client, user_prompt)
 
-            # Validate and build action
+            # Force submit after 3 test queries to avoid infinite loops
+            test_count = sum(1 for h in history if "[test_query]" in h)
+            if test_count >= 3 and action_dict.get("action_type") == "test_query":
+                action_dict["action_type"] = "submit_fix"
+
+            # Build the action object
             try:
                 action = SQLAction(**action_dict)
             except Exception:
