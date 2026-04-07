@@ -3,14 +3,14 @@ FastAPI server for SQL Debug Environment.
 
 Endpoints
 ---------
-POST /reset          Start a new episode. Body: {"task_id": "easy"}
-POST /step           Take a step.         Body: SQLAction JSON
-GET  /state          Current episode state.
-GET  /health         Health check.
-GET  /tasks          List all available tasks.
-POST /grader         Grade a query without a full episode.
-GET  /baseline       Run the oracle agent on all tasks; return all scores.
-GET  /docs           Auto-generated Swagger UI.
+POST /reset      Start a new episode. Body: {"task_id": "easy"}
+POST /step       Take a step.         Body: SQLAction JSON
+GET  /state      Current episode state.
+GET  /health     Health check.
+GET  /tasks      List all available tasks.
+POST /grader     Grade a query without a full episode.
+GET  /baseline   Run oracle agent on all tasks; return all scores.
+GET  /docs       Swagger UI.
 
 Port: 7860  (Hugging Face Spaces default)
 """
@@ -125,18 +125,12 @@ def standalone_grader(body: GraderRequest) -> Dict[str, Any]:
 @app.get("/baseline", summary="Run oracle agent on all tasks and return scores")
 def baseline_scores() -> Dict[str, Any]:
     tmp = SQLDebugEnvironment()
-    results = []
-    for task in ALL_TASKS:
-        r = tmp.oracle_score(task.id)
-        results.append(r)
+    results = [tmp.oracle_score(task.id) for task in ALL_TASKS]
     avg = round(sum(r["score"] for r in results) / len(results), 4)
     return {"scores": results, "average": avg}
 
 
-# ---------------------------------------------------------------------------
-# BUG FIX: removed duplicate if __name__ == "__main__" block.
-# Single clean main() entry point used by pyproject.toml [project.scripts]
-# ---------------------------------------------------------------------------
+# FIX: single clean main() — removed duplicate if __name__ == "__main__" block
 def main():
     port = int(os.getenv("PORT", "7860"))
     uvicorn.run(app, host="0.0.0.0", port=port)
