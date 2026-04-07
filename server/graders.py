@@ -170,9 +170,10 @@ def _build_result(
     feedback: str,
     actual_rows: List[Dict],
 ) -> Dict:
-    multipliers = {1: 1.00, 2: 0.95, 3: 0.90, 4: 0.85, 5: 0.80}
+    multipliers = {1: 0.99, 2: 0.95, 3: 0.90, 4: 0.85, 5: 0.80}
     mult = multipliers.get(attempt_number, 0.75)
-    final_score = round(raw_score * mult, 4)
+    # Clamp to (0.01, 0.99) — scores of exactly 0.0 or 1.0 fail Phase 2 validation
+    final_score = max(0.01, min(0.99, round(raw_score * mult, 4)))
     return {
         "score": final_score,
         "raw_score": round(raw_score, 4),
