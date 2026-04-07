@@ -133,7 +133,9 @@ class SQLDebugEnvironment:
             info["reason"] = "max_steps_reached"
 
         obs = self._build_observation()
-        return obs, round(reward, 4), done, info
+        # Clamp reward to (0.01, 0.99) — Phase 2 validator rejects exact 0.0 or 1.0
+        reward = max(0.01, min(0.99, round(reward, 4)))
+        return obs, reward, done, info
 
     # ------------------------------------------------------------------
     # State property
