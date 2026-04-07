@@ -135,7 +135,7 @@ async def run_episode(env: SQLDebugEnv, task_id: str, llm_client: OpenAI) -> dic
     rewards: List[float] = []
     steps_taken = 0
     success     = False
-    score       = 0.0
+    score       = 0.01
     history: List[str] = []
     obs         = None
 
@@ -183,9 +183,10 @@ async def run_episode(env: SQLDebugEnv, task_id: str, llm_client: OpenAI) -> dic
 
     except Exception as exc:
         print(f"[DEBUG] Episode error: {exc}", flush=True)
-        score, success = 0.0, False
+        score, success = 0.01, False
 
     finally:
+        score = max(0.01, min(0.99, score))
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
     return {"task_id": task_id, "success": success, "steps": steps_taken, "score": score}
@@ -218,8 +219,8 @@ async def main() -> None:
                 print(f"[DEBUG] Task {task_id} outer error: {exc}", flush=True)
                 # Still emit structured output so validator sees [START]/[END]
                 log_start(task=task_id, env="sql_debug_env", model=MODEL_NAME)
-                log_end(success=False, steps=0, score=0.0, rewards=[])
-                all_results.append({"task_id": task_id, "success": False, "steps": 0, "score": 0.0})
+                log_end(success=False, steps=0, score=0.01, rewards=[])
+                all_results.append({"task_id": task_id, "success": False, "steps": 0, "score": 0.01})
 
     except Exception as exc:
         print(f"[DEBUG] Fatal setup error: {exc}", flush=True)
@@ -227,8 +228,8 @@ async def main() -> None:
         for task_id in TASK_IDS_ORDERED:
             if not any(r["task_id"] == task_id for r in all_results):
                 log_start(task=task_id, env="sql_debug_env", model=MODEL_NAME)
-                log_end(success=False, steps=0, score=0.0, rewards=[])
-                all_results.append({"task_id": task_id, "success": False, "steps": 0, "score": 0.0})
+                log_end(success=False, steps=0, score=0.01, rewards=[])
+                all_results.append({"task_id": task_id, "success": False, "steps": 0, "score": 0.01})
 
     finally:
         if env is not None:
