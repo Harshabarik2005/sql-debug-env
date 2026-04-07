@@ -58,7 +58,7 @@ class SQLDebugEnvironment:
         self._attempt_number: int = 0
         self._steps_taken: int = 0
         self._is_solved: bool = False
-        self._current_best_score: float = 0.0
+        self._current_best_score: float = 0.01
         self._expected_cols: List[str] = []
         self._expected_rows: List[Dict] = []
         self._last_error: str = ""
@@ -81,7 +81,7 @@ class SQLDebugEnvironment:
         self._attempt_number = 0
         self._steps_taken = 0
         self._is_solved = False
-        self._current_best_score = 0.0
+        self._current_best_score = 0.01
         self._last_error = ""
         self._last_feedback = ""
         self._last_test_output = ""
