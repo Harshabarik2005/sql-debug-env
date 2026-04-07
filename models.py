@@ -73,7 +73,7 @@ class SQLObservation(_ObsBase):
     steps_taken: int          = Field(0,   description="Total steps (test + submit) taken.")
     hint: str                 = Field("",  description="A hint shown automatically after 2 failed submit attempts.")
     score_breakdown: Dict[str, float] = Field(default_factory=dict, description="Partial score components.")
-    current_best_score: float = Field(0.0, description="Highest grader score achieved in this episode so far.")
+    current_best_score: float = Field(0.01, description="Highest grader score achieved in this episode so far.")
     is_solved: bool           = Field(False, description="True once a submit_fix achieves score >= 0.9.")
 
 
@@ -92,7 +92,7 @@ class SQLState(_StateBase):
     attempt_number: int       = Field(0,   description="Submit attempts so far.")
     steps_taken: int          = Field(0,   description="Total steps so far.")
     is_solved: bool           = Field(False, description="Whether the episode is solved.")
-    current_best_score: float = Field(0.0, description="Best grader score so far.")
+    current_best_score: float = Field(0.01, description="Best grader score so far.")
     max_attempts: int         = Field(5,   description="Attempt cap.")
 
 
