@@ -49,7 +49,7 @@ class TestGrader:
         task = TASK_BY_ID["easy"]
         expected_cols, expected_rows = compute_expected(fresh_db, task.correct_query)
         result = grade(fresh_db, task.correct_query, expected_cols, expected_rows, attempt_number=1)
-        assert result["score"] == pytest.approx(1.0, abs=0.01)
+        assert result["score"] == pytest.approx(0.99, abs=0.001)  # clamped max
         assert result["syntax_ok"] == pytest.approx(0.30, abs=0.01)
         assert result["columns_ok"] == pytest.approx(0.20, abs=0.01)
         assert result["rows_ok"] == pytest.approx(0.10, abs=0.01)
@@ -61,7 +61,7 @@ class TestGrader:
         result = grade(fresh_db, "SELCT name FORM employees WERE dept_id = 1",
                        expected_cols, expected_rows, attempt_number=1)
         assert result["syntax_ok"] == 0.0
-        assert result["score"] == 0.0
+        assert result["score"] == pytest.approx(0.01, abs=0.001)  # clamped min
         assert result["error_message"] != ""
 
     def test_columns_mismatch_partial_credit(self, fresh_db):
@@ -89,7 +89,7 @@ class TestGrader:
         expected_cols, expected_rows = compute_expected(fresh_db, task.correct_query)
         r1 = grade(fresh_db, task.correct_query, expected_cols, expected_rows, attempt_number=1)
         r3 = grade(fresh_db, task.correct_query, expected_cols, expected_rows, attempt_number=3)
-        assert r1["attempt_mult"] == 1.00
+        assert r1["attempt_mult"] == pytest.approx(0.99, abs=0.001)  # clamped max
         assert r3["attempt_mult"] == 0.90
         assert r1["score"] > r3["score"]
 
@@ -220,7 +220,7 @@ class TestEnvironment:
         env.reset(task_id="easy")
         action = SQLAction(action_type="submit_fix", sql_query="SELCT name FORM employees")
         obs, reward, done, _ = env.step(action)
-        assert reward == 0.0
+        assert reward == pytest.approx(0.01, abs=0.001)  # clamped min — validator rejects 0.0
         assert done is False
         assert obs.error_message != ""
 
